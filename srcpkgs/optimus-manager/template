@@ -1,0 +1,42 @@
+# Template file for 'optimus-manager'
+pkgname=optimus-manager
+version=1.2.2
+revision=1
+build_style=python3-module
+#conf_files="" TODO
+hostmakedepends="python3-setuptools"
+depends="python3-dbus xrandr"
+short_desc="Utility to handle GPU switching on Optimus laptops"
+maintainer="Stefano Ragni <st3r4g@protonmail.com>"
+license="MIT"
+homepage="https://github.com/Askannz/optimus-manager"
+distfiles="https://github.com/Askannz/optimus-manager/archive/v${version}.tar.gz"
+checksum=1bca76ceeefb80dd885aa9bded048d534c8d77803d832f2d17842e89b1613efb
+
+pre_install() {
+	vlicense LICENSE
+	vinstall modules/optimus-manager.conf 644 usr/lib/modprobe.d
+	vsv optimus-manager
+	vinstall optimus-manager.conf 644 usr/share
+
+	vinstall systemd/logind/10-optimus-manager.conf 644 usr/lib/systemd/logind.conf.d
+
+	vinstall var/startup_mode 644 var/lib/optimus-manager
+	vinstall var/requested_mode 644 var/lib/optimus-manager
+
+	vinstall scripts/prime-switch-boot 755 usr/bin
+	vinstall scripts/prime-switch 755 usr/bin
+	vinstall scripts/prime-offload 755 usr/bin
+
+	vinstall login_managers/sddm/20-optimus-manager.conf 644 etc/sddm.conf.d
+	vinstall login_managers/lightdm/20-optimus-manager.conf 644 etc/lightdm/lightdm.conf.d
+
+	vinstall config/xorg-intel.conf 644 etc/optimus-manager
+	vinstall config/xorg-nvidia.conf 644 etc/optimus-manager
+
+	vinstall config/xsetup-intel.sh 755 etc/optimus-manager
+	vinstall config/xsetup-nvidia.sh 755 etc/optimus-manager
+
+	vinstall config/nvidia-enable.sh 755 etc/optimus-manager
+	vinstall config/nvidia-disable.sh 755 etc/optimus-manager
+}

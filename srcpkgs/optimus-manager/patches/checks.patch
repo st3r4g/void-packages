@@ -1,0 +1,24 @@
+diff --git optimus_manager/optimus_manager_client.py optimus_manager/optimus_manager_client.py
+index c02086d..2b32b4b 100755
+--- optimus_manager/optimus_manager_client.py
++++ optimus_manager/optimus_manager_client.py
+@@ -77,16 +77,16 @@ def main():
+ 
+     elif args.switch:
+ 
+-        _check_daemon_active()
++#        _check_daemon_active()
+ 
+         switch_mode = _get_switch_mode(args.switch)
+ 
+         _check_power_switching(config)
+         _check_bbswitch_module(config)
+         _check_nvidia_module(switch_mode)
+-        _check_patched_GDM()
++#        _check_patched_GDM()
+         _check_wayland()
+-        _check_bumblebeed()
++#        _check_bumblebeed()
+         _check_xorg_conf()
+         _check_MHWD_conf()
+         _check_intel_xorg_module(config, switch_mode)
