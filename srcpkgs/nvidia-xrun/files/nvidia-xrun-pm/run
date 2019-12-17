@@ -1,0 +1,3 @@
+#!/bin/sh
+TURN_OFF_GPU_ONLY=1 /usr/bin/nvidia-xrun
+exec chpst -b nvidia-xrun-pm pause
