@@ -1,0 +1,18 @@
+# Template file for 'nvidia-xrun'
+pkgname=nvidia-xrun
+version=0.3
+revision=1
+archs=noarch
+wrksrc="nvidia-xrun-${version}"
+short_desc="Utility to run X session with discrete nvidia graphics"
+maintainer="Stefano Ragni <st3r4g@protonmail.com>"
+license="GPL-2.0-only"
+homepage="https://github.com/Witko/nvidia-xrun"
+distfiles="https://github.com/Witko/nvidia-xrun/archive/${version}.tar.gz"
+checksum=ec4b85ea6b4a6ba28c8933f3625681c721d0e86d1c7d24040b8e75e859459af9
+
+do_install() {
+	vinstall nvidia-xorg.conf 644 etc/X11
+	vinstall nvidia-xinitrc 755 etc/X11/xinit
+	vbin nvidia-xrun
+}
