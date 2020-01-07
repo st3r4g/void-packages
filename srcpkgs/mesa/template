@@ -1,7 +1,7 @@
 # Template file for 'mesa'
 pkgname=mesa
 version=19.3.1
-revision=3
+revision=4
 wrksrc="mesa-${version}"
 build_style=meson
 configure_args="-Dglvnd=true -Dshared-glapi=true -Dgbm=true -Degl=true
@@ -16,8 +16,8 @@ makedepends="elfutils-devel expat-devel libXdamage-devel libXvMC-devel
  libXxf86vm-devel libatomic-devel libdrm-devel libffi-devel libva-devel
  libvdpau-devel libxshmfence-devel ncurses-devel talloc-devel zlib-devel
  $(vopt_if wayland 'wayland-devel wayland-protocols') llvm
- libsensors-devel libXrandr-devel libglvnd-devel"
-depends="libglvnd"
+ libsensors-devel libXrandr-devel libglvnd-core-devel"
+depends="mesa-dri-${version}_${revision}"
 short_desc="Graphics library similar to SGI's OpenGL"
 maintainer="Juan RP <xtraeme@gmail.com>"
 license="MIT, LGPL-2.1-or-later"
@@ -31,6 +31,8 @@ build_options_default="wayland"
 
 # Set subpackages manually to set proper rdeps in 32bit pkgs.
 subpackages="libglapi libgbm libOSMesa"
+
+provides="gl-vendor-1_1"
 
 # Replace old mesa pkgs, superseded by libglvnd.
 replaces="libGL>=10_1<19.2.5_2 libEGL>=10_1<19.2.5_2 libGLES>=10_1<19.2.5_2"
@@ -198,7 +200,6 @@ mesa-opencl_package() {
 
 mesa-dri_package() {
 	short_desc="Mesa DRI drivers"
-	depends="mesa-${version}_${revision}"
 	shlib_provides="libgallium_dri.so" # workaround for mesa-dri-32bit
 	nostrip_files="armada-drm_dri.so etnaviv_dri.so exynos_dri.so
 	 hx8357d_dri.so i915_dri.so i965_dri.so ili9225_dri.so ili9341_dri.so
