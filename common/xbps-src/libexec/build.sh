@@ -135,4 +135,8 @@ if [ -n "$XBPS_DEPENDENCY" -o -z "$XBPS_KEEP_ALL" ]; then
     remove_pkg_statedir
 fi
 
+if [ "$PKGNAME" != "$XBPS_TARGET_PKG" -o -z "$XBPS_SKIP_DEPS" ]; then
+    build_runtime_deps $PKGNAME $XBPS_TARGET_PKG pkg $XBPS_CROSS_BUILD $XBPS_CROSS_PREPARE || exit $?
+fi
+
 exit 0

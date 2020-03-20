@@ -126,7 +126,101 @@ check_installed_pkg() {
 }
 
 #
-# Build all dependencies required to build and run.
+# Build all dependencies required to run.
+# - Is it better to grab deps from the pkg?
+# - Is targetpkg still required?
+#
+build_runtime_deps() {
+    local pkg="$1" targetpkg="$2" target="$3" cross="$4" cross_prepare="$5"
+    local _vpkg curpkgdepname
+    local i found style
+    local templates=""
+
+    local -a missing_rdeps
+
+    [ -z "$pkgname" ] && return 2
+    [ -z "$XBPS_CHECK_PKGS" ] && unset checkdepends
+    [[ $build_style ]] && style=" [$build_style]"
+
+    for s in $build_helper; do
+        style+=" [$s]"
+    done
+
+    msg_normal "$pkgver: checking runtime dependencies...\n"
+    #
+    # Target run time dependencies
+    #
+    if [[ ${depends} ]]; then
+        templates=""
+        local _cleandeps=$(setup_pkg_depends "" 1) || exit 1
+        for f in ${_cleandeps}; do
+            if [ -f $XBPS_SRCPKGDIR/$f/template ]; then
+                templates+=" $f"
+                continue
+            fi
+            local _repourl=$($XBPS_QUERY_XCMD -R -prepository "$f" 2>/dev/null)
+            if [ "$_repourl" ]; then
+                echo "   [target] ${f}: found (${_repourl})"
+                continue
+            fi
+            msg_error "$pkgver: target dependency '$f' does not exist!\n"
+        done
+        while read -r _depname _deprepover _depver _subpkg _repourl; do
+            _vpkg=${_subpkg}-${_depver}
+            # binary package found in a repo
+            if [[ ${_depver} == ${_deprepover} ]]; then
+                echo "   [runtime] ${_vpkg}: found (${_repourl})"
+                continue
+            fi
+            # binary package not found
+            if [[ $_depname != $_subpkg ]]; then
+                # subpkg, check if it's a subpkg of itself
+                found=0
+                for f in ${subpackages}; do
+                    if [[ ${_subpkg} == ${f} ]]; then
+                        found=1
+                        break
+                    fi
+                done
+                if [[ $found -eq 1 ]]; then
+                    echo "   [runtime] ${_vpkg}: not found (subpkg, ignored)"
+                else
+                    echo "   [runtime] ${_vpkg}: not found"
+                    missing_rdeps+=("$_vpkg")
+                fi
+            else
+                echo "   [runtime] ${_vpkg}: not found"
+                missing_rdeps+=("$_vpkg")
+            fi
+        done < <($XBPS_CHECKVERS_XCMD -D $XBPS_DISTDIR -sm $templates)
+    fi
+
+    if [ -n "$XBPS_BUILD_ONLY_ONE_PKG" ]; then
+           for i in ${missing_rdeps[@]}; do
+                   msg_error "dep ${i} not found: -1 passed: instructed not to build\n"
+           done
+    fi
+
+    # Target runtime missing dependencies, build from srcpkgs.
+    for i in ${missing_rdeps[@]}; do
+        # packages not found in repos, install from source.
+        (
+        curpkgdepname=$($XBPS_UHELPER_CMD getpkgdepname "$i" 2>/dev/null)
+        if [ -z "$curpkgdepname" ]; then
+            curpkgdepname=$($XBPS_UHELPER_CMD getpkgname "$i" 2>/dev/null)
+            if [ -z "$curpkgdepname" ]; then
+                curpkgdepname="$i"
+            fi
+        fi
+        setup_pkg $curpkgdepname $cross
+        exec env XBPS_DEPENDENCY=1 XBPS_BINPKG_EXISTS=1 \
+            $XBPS_LIBEXECDIR/build.sh $sourcepkg $pkg $target $cross $cross_prepare || exit $?
+        ) || exit $?
+    done
+}
+
+#
+# Build all build-time dependencies and install them.
 #
 install_pkg_deps() {
     local pkg="$1" targetpkg="$2" target="$3" cross="$4" cross_prepare="$5"
@@ -135,7 +229,7 @@ install_pkg_deps() {
     local templates=""
 
     local -a host_binpkg_deps binpkg_deps
-    local -a host_missing_deps missing_deps missing_rdeps
+    local -a host_missing_deps missing_deps
 
     [ -z "$pkgname" ] && return 2
     [ -z "$XBPS_CHECK_PKGS" ] && unset checkdepends
@@ -301,61 +395,8 @@ install_pkg_deps() {
         done < <($XBPS_CHECKVERS_XCMD -D $XBPS_DISTDIR -sm $templates)
     fi
 
-    #
-    # Target run time dependencies
-    #
-    local _cleandeps=$(setup_pkg_depends "" 1 1) || exit 1
-    if [[ ${_cleandeps} ]]; then
-        templates=""
-        for f in ${_cleandeps}; do
-            if [ -f $XBPS_SRCPKGDIR/$f/template ]; then
-                templates+=" $f"
-                continue
-            fi
-            local _repourl=$($XBPS_QUERY_XCMD -R -prepository "$f" 2>/dev/null)
-            if [ "$_repourl" ]; then
-                echo "   [target] ${f}: found (${_repourl})"
-                continue
-            fi
-            msg_error "$pkgver: target dependency '$f' does not exist!\n"
-        done
-        while read -r _depname _deprepover _depver _subpkg _repourl; do
-            _vpkg=${_subpkg}-${_depver}
-            # binary package found in a repo
-            if [[ ${_depver} == ${_deprepover} ]]; then
-                echo "   [runtime] ${_vpkg}: found (${_repourl})"
-                continue
-            fi
-            # binary package not found
-            if [[ $_depname != $_subpkg ]]; then
-                # subpkg, check if it's a subpkg of itself
-                found=0
-                for f in ${subpackages}; do
-                    if [[ ${_subpkg} == ${f} ]]; then
-                        found=1
-                        break
-                    fi
-                done
-                if [[ $found -eq 1 ]]; then
-                    echo "   [runtime] ${_vpkg}: not found (subpkg, ignored)"
-                else
-                    echo "   [runtime] ${_vpkg}: not found"
-                    missing_rdeps+=("$_vpkg")
-                fi
-            elif [[ ${_depname} == ${pkgname} ]]; then
-                    echo "   [runtime] ${_vpkg}: not found (self, ignored)"
-            else
-                echo "   [runtime] ${_vpkg}: not found"
-                missing_rdeps+=("$_vpkg")
-            fi
-        done < <($XBPS_CHECKVERS_XCMD -D $XBPS_DISTDIR -sm $templates)
-    fi
-
     if [ -n "$XBPS_BUILD_ONLY_ONE_PKG" ]; then
            for i in ${host_missing_deps[@]}; do
-                   msg_error "dep ${i} not found: -1 passed: instructed not to build\n"
-           done
-           for i in ${missing_rdeps[@]}; do
                    msg_error "dep ${i} not found: -1 passed: instructed not to build\n"
            done
            for i in ${missing_deps[@]}; do
@@ -386,23 +427,6 @@ install_pkg_deps() {
             $XBPS_LIBEXECDIR/build.sh $sourcepkg $pkg $target $cross $cross_prepare || exit $?
         ) || exit $?
         binpkg_deps+=("$i")
-    done
-
-    # Target runtime missing dependencies, build from srcpkgs.
-    for i in ${missing_rdeps[@]}; do
-        # packages not found in repos, install from source.
-        (
-        curpkgdepname=$($XBPS_UHELPER_CMD getpkgdepname "$i" 2>/dev/null)
-        if [ -z "$curpkgdepname" ]; then
-            curpkgdepname=$($XBPS_UHELPER_CMD getpkgname "$i" 2>/dev/null)
-            if [ -z "$curpkgdepname" ]; then
-                curpkgdepname="$i"
-            fi
-        fi
-        setup_pkg $curpkgdepname $cross
-        exec env XBPS_DEPENDENCY=1 XBPS_BINPKG_EXISTS=1 XBPS_DEPENDS_CHAIN="$XBPS_DEPENDS_CHAIN, $sourcepkg(${cross:-host})" \
-            $XBPS_LIBEXECDIR/build.sh $sourcepkg $pkg $target $cross $cross_prepare || exit $?
-        ) || exit $?
     done
 
     if [[ ${host_binpkg_deps} ]]; then
