@@ -3876,3 +3876,5 @@ libhidrd_opt.so.0 hidrd-0.2.0_1
 libhidrd_strm.so.0 hidrd-0.2.0_1
 libhidrd_fmt.so.0 hidrd-0.2.0_1
 libjcat.so.1 libjcat-0.1.2_1
+libLLVMSPIRVLib.so.10 SPIRV-LLVM-Translator-10.0.0_1
+libopencl-clang.so.10 intel-opencl-clang-10.0.0.1_1

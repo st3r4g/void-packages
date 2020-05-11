@@ -1,0 +1,22 @@
+# Template file for 'intel-opencl-clang'
+pkgname=intel-opencl-clang
+version=10.0.0.1
+_version=10.0.0-1
+revision=1
+wrksrc=opencl-clang-${_version}
+#create_wrksrc=yes
+archs="i686* x86_64*"
+build_style=cmake
+#configure_args=""
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+makedepends="llvm10 SPIRV-LLVM-Translator-devel"
+depends=""
+short_desc="wrapper library around clang"
+maintainer="Stefano Ragni <st3r4g@protonmail.com>"
+license="custom:LLVM"
+homepage="https://github.com/intel/opencl-clang"
+distfiles="https://github.com/intel/opencl-clang/archive/v${_version}.tar.gz"
+checksum=815005b6fb7fd8fd2f08b9036035d3aa9543f5ce8464e41ef2f2ed08a816f507
