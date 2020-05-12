@@ -12,7 +12,6 @@ build_style=cmake
 #conf_files=""
 #make_dirs="/var/log/dir 0755 root root"
 hostmakedepends="pkg-config"
-#makedepends="intel-gmmlib-devel intel-graphics-compiler libexecinfo-devel" TODO
 makedepends="intel-gmmlib-devel intel-graphics-compiler"
 depends="intel-gmmlib intel-graphics-compiler"
 short_desc="Intel Graphics Compute Runtime for OpenCL (Broadwell+)"
@@ -22,7 +21,10 @@ homepage="https://github.com/intel/compute-runtime"
 distfiles="https://github.com/intel/compute-runtime/archive/${version}.tar.gz"
 checksum=04576130cbb72af19ef6c79092105af7c06df95d7b17769d8fd815fe81c42b12
 
-#CXXFLAGS+=" -lexecinfo" TODO: see if it helps on musl
+if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
+	makedepends+=" libexecinfo-devel"
+	CXXFLAGS+=" -lexecinfo -DSANITIZER_BUILD"
+fi
 
 post_install() {
 	vlicense LICENSE
