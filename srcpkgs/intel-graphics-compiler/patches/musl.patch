@@ -11,3 +11,13 @@ index 8177776..5e3dabf 100644
      #define UNIQUENAME( __text )    __UNIQUENAME( __text, __COUNTER__ )
  
  
+--- visa/CISA.y.orig	2020-05-12 08:57:46.820979512 +0200
++++ visa/CISA.y	2020-05-12 08:58:14.689978585 +0200
+@@ -25,6 +25,7 @@
+ ======================= end_copyright_notice ==================================*/
+ 
+ %{
++#include <inttypes.h>
+ #include <stdio.h>
+ #include <math.h>
+ #include <string>
