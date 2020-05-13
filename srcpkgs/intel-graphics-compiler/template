@@ -2,7 +2,7 @@
 pkgname=intel-graphics-compiler
 version=1.0.3899
 revision=1
-archs="i686* x86_64*"
+#archs="i686* x86_64*"
 wrksrc=intel-graphics-compiler-igc-${version}
 build_style=cmake
 configure_args="-DIGC_PREFERRED_LLVM_VERSION='10.0.0' -Wno-dev"

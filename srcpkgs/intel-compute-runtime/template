@@ -2,7 +2,7 @@
 pkgname=intel-compute-runtime
 version=20.18.16699
 revision=1
-archs="i686* x86_64*"
+#archs="i686* x86_64*"
 wrksrc=compute-runtime-${version}
 build_style=cmake
 hostmakedepends="pkg-config"
