@@ -6,6 +6,7 @@ _version=10.0.0-1
 #archs="i686* x86_64*"
 wrksrc=opencl-clang-${_version}
 build_style=cmake
+hostedepends="clang-tools-extra llvm"
 makedepends="clang-tools-extra llvm SPIRV-LLVM-Translator-devel"
 short_desc="Wrapper library to compile OpenCL C kernels to SPIR-V modules"
 maintainer="Stefano Ragni <st3r4g@protonmail.com>"
