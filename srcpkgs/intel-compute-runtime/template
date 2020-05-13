@@ -2,24 +2,22 @@
 pkgname=intel-compute-runtime
 version=20.18.16699
 revision=1
-wrksrc=compute-runtime-${version}
-#create_wrksrc=yes
 archs="i686* x86_64*"
+wrksrc=compute-runtime-${version}
 build_style=cmake
-#configure_args=""
-#make_build_args=""
-#make_install_args=""
-#conf_files=""
-#make_dirs="/var/log/dir 0755 root root"
 hostmakedepends="pkg-config"
 makedepends="intel-gmmlib-devel intel-graphics-compiler"
-depends="intel-gmmlib intel-graphics-compiler"
+depends="intel-graphics-compiler"
 short_desc="Intel Graphics Compute Runtime for OpenCL (Broadwell+)"
 maintainer="Stefano Ragni <st3r4g@protonmail.com>"
 license="MIT"
 homepage="https://github.com/intel/compute-runtime"
 distfiles="https://github.com/intel/compute-runtime/archive/${version}.tar.gz"
 checksum=04576130cbb72af19ef6c79092105af7c06df95d7b17769d8fd815fe81c42b12
+
+if [ -z "${XBPS_CHECK_PKGS}" ]; then
+	configure_args+=" -DSKIP_UNIT_TESTS=1"
+fi
 
 if [ "$XBPS_TARGET_LIBC" = "musl" ]; then
 	makedepends+=" libexecinfo-devel"
