@@ -2,18 +2,12 @@
 pkgname=intel-graphics-compiler
 version=1.0.3899
 revision=1
-wrksrc=intel-graphics-compiler-igc-${version}
-#create_wrksrc=yes
 archs="i686* x86_64*"
+wrksrc=intel-graphics-compiler-igc-${version}
 build_style=cmake
-configure_args="-DIGC_PREFERRED_LLVM_VERSION='10.0.0'"
-#make_build_args=""
-#make_install_args=""
-#conf_files=""
-#make_dirs="/var/log/dir 0755 root root"
+configure_args="-DIGC_PREFERRED_LLVM_VERSION='10.0.0' -Wno-dev"
 hostmakedepends="bison flex"
-makedepends="clang-tools-extra llvm10 intel-opencl-clang"
-depends=""
+makedepends="clang-tools-extra llvm intel-opencl-clang-devel"
 short_desc="Intel Graphics Compiler for OpenCL"
 maintainer="Stefano Ragni <st3r4g@protonmail.com>"
 license="MIT"

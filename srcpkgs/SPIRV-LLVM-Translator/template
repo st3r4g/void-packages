@@ -3,18 +3,11 @@ pkgname=SPIRV-LLVM-Translator
 version=10.0.0
 revision=1
 wrksrc=SPIRV-LLVM-Translator-${version}
-#create_wrksrc=yes
 #archs="i686 x86_64"
 build_style=cmake
 configure_args="-DBUILD_SHARED_LIBS=ON"
-#make_build_args=""
-#make_install_args=""
-#conf_files=""
-#make_dirs="/var/log/dir 0755 root root"
-#hostmakedepends="llvm10"
-makedepends="clang-tools-extra llvm10"
-depends=""
-short_desc="library and tool for translation between LLVM IR and SPIR-V"
+makedepends="clang-tools-extra llvm"
+short_desc="Library and tool for translation between LLVM IR and SPIR-V"
 maintainer="Stefano Ragni <st3r4g@protonmail.com>"
 license="custom:LLVM"
 homepage="https://github.com/KhronosGroup/SPIRV-LLVM-Translator"
@@ -26,7 +19,7 @@ post_install() {
 }
 
 SPIRV-LLVM-Translator-devel_package() {
-	depends="${makedepends} ${sourcepkg}-${version}_${revision}"
+	depends="${sourcepkg}-${version}_${revision}"
 	short_desc+=" - development files"
 	pkg_install() {
 		vmove usr/include
