@@ -1,0 +1,7 @@
+# Remove the database symlink
+#
+case "${ACTION}" in
+post)
+	rm /etc/s6-rc/compiled
+	;;
+esac

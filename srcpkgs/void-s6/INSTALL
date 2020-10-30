@@ -1,0 +1,7 @@
+# Compile the source tree
+#
+case "${ACTION}" in
+post)
+	vs6-recompile
+	;;
+esac
