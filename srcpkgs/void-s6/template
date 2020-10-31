@@ -4,6 +4,7 @@ version=0
 revision=1
 wrksrc=void-s6
 hostmakedepends="git"
+depends="s6-rc"
 short_desc="Source tree for s6-rc"
 maintainer="Stefano Ragni <st3r4g@protonmail.com>"
 license="Unlicense"
