@@ -1,8 +1,19 @@
---- skel/rc.shutdown.orig	2020-10-26 09:44:34.054971634 +0100
-+++ skel/rc.shutdown	2020-10-26 09:44:47.019972266 +0100
-@@ -27,4 +27,4 @@
+--- skel/rc.shutdown.orig	2020-10-31 23:05:16.378974623 +0100
++++ skel/rc.shutdown	2020-10-31 23:05:41.287975333 +0100
+@@ -12,7 +12,7 @@
+ ### catch-all logger and will NOT appear on /dev/console. In order
+ ### to print them to /dev/console instead, you may want to
+ ### uncomment the following line:
+-# exec >/dev/console 2>&1
++exec >/dev/console 2>&1
+ 
+ ### If your services are managed by sysv-rc:
+ ### also remove the K11reboot link from /etc/rc6.d to prevent
+@@ -27,4 +27,6 @@
  # exec /sbin/openrc shutdown
  
  ### If your services are managed by s6-rc:
 -# exec s6-rc -v2 -bda change
-+exec s6-rc -v2 -bda change
++s6-rc -v2 -bda change
++
++exec /etc/s6-linux-init/3

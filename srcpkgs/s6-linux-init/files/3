@@ -1,0 +1,33 @@
+#!/bin/sh
+# vim: set ts=4 sw=4 et:
+# Extracted from /etc/runit/3
+
+PATH=/usr/bin:/usr/sbin
+
+. /etc/runit/functions
+detect_virt
+[ -r /etc/rc.conf ] && . /etc/rc.conf
+
+if [ -z "$VIRTUALIZATION" ]; then
+    msg "Saving random seed..."
+    ( umask 077; bytes=$(cat /proc/sys/kernel/random/poolsize) || bytes=512; dd if=/dev/urandom of=/var/lib/random-seed count=1 bs=$bytes >/dev/null 2>&1 )
+fi
+
+if [ -z "$VIRTUALIZATION" -a -n "$HARDWARECLOCK" ]; then
+    hwclock --systohc ${HARDWARECLOCK:+--$(echo $HARDWARECLOCK |tr A-Z a-z)}
+fi
+
+if [ -z "$VIRTUALIZATION" ]; then
+    msg "Stopping udev..."
+    udevadm control --exit
+fi
+
+if [ -z "$VIRTUALIZATION" ]; then
+    msg "Disabling swap..."
+    swapoff -a
+fi
+
+if [ -z "$VIRTUALIZATION" ]; then
+    deactivate_vgs
+    deactivate_crypt
+fi
