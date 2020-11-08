@@ -3,6 +3,7 @@ pkgname=void-s6
 version=0
 revision=1
 wrksrc=void-s6
+conf_files="/etc/s6-rc/custom/enabled/contents"
 hostmakedepends="git"
 depends="s6-rc"
 short_desc="Source tree for s6-rc"
@@ -16,6 +17,7 @@ do_fetch() {
 
 do_install() {
 	vmkdir etc/s6-rc
-	vcopy source etc/s6-rc/source
+	vcopy custom etc/s6-rc/custom
+	vcopy void etc/s6-rc/void
 	vbin vs6-recompile
 }
