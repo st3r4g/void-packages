@@ -1,6 +1,6 @@
 # Template file for 's6-linux-init'
 pkgname=s6-linux-init
-version=1.0.4.2
+version=1.0.6.0
 revision=1
 build_style=configure
 configure_args="--bindir=/usr/bin"
@@ -11,7 +11,7 @@ maintainer="Stefano Ragni <st3r4g@protonmail.com>"
 license="ISC"
 homepage="https://skarnet.org/software/s6-linux-init"
 distfiles="https://skarnet.org/software/s6-linux-init/s6-linux-init-${version}.tar.gz"
-checksum=f511a0256ff14eab00b117562c0f229d68dd294e1ca9537244239752d099e466
+checksum=dce456d090683d6742e0daa3278430e5f0e3d96aff5ac30e24f05488db70f14f
 
 post_install() {
 	vinstall ${FILESDIR}/3 755 etc/s6-linux-init
